@@ -7,6 +7,8 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class Discnt {
+	private int[] arrayGlobal;
+	
 	public static void main(String[] args) throws IOException {
 		String inputFile = "discnt.in";
 		String outputFile = "discnt.out";
@@ -35,6 +37,7 @@ public class Discnt {
 		int discountPercent = Integer.parseInt(discountStr);
 		
 		String[] pricesStrArray = pricesStr.split(" ");
+		arrayGlobal = new int[pricesStrArray.length];
 		int[] prices = new int[pricesStrArray.length];
 		for (int i = 0; i < pricesStrArray.length; i++) {
 			try {
@@ -59,10 +62,11 @@ public class Discnt {
 			} else {
 				sum += prices[i] - ((double)prices[i] * discountPercent / 100); 
 			}
-		}		
+		}
+		
 		
 		Locale.setDefault(Locale.US);
-		DecimalFormat df = new DecimalFormat("#0.00");
+		DecimalFormat df = new DecimalFormat("0.00");
 		writeToFile(outputFile, df.format(sum));
 	}
 	
@@ -74,13 +78,38 @@ public class Discnt {
 	}
 	
 	private void sort(int[] array) {
-		for (int i = 1; i < array.length; i++) {
-			for (int j = i; j > 0; j--) {
-				if (array[j] < array[j - 1]) {
-					swap(array, j, j - 1);
-				}
-			}
+		sort(array, 0, array.length - 1);
+	}
+	
+	private void sort(int[] array, int lo, int hi) {
+		if (lo < hi) {
+			int mid = lo + (hi - lo)/2;
+			sort(array, lo, mid);
+			sort(array, mid + 1, hi);
+			merge(array, lo, mid, hi);
 		}
+	}
+	
+	private void merge(int[] array, int lo, int mid, int hi) {
+		int i = lo;
+		int j = mid + 1;
+		
+		for (int k = lo; k <= hi; k++) {
+			arrayGlobal[k] = array[k];
+		}
+		
+		for (int k = lo; k <= hi; k++) {
+			if (i > mid) {
+				array[k] = arrayGlobal[j++];
+			} else if (j > hi){
+				array[k] = arrayGlobal[i++];
+			} else if (arrayGlobal[i] < arrayGlobal[j]) {
+				array[k] = arrayGlobal[i++];
+			} else {
+				array[k] = arrayGlobal[j++]; 
+			} 
+		}
+		
 	}
 	
 	private void swap(int[] array, int i, int j) {
