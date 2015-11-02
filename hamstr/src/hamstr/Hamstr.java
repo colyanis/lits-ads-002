@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Hamstr {
 	
-	public void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		String inputFile = "hamstr.in";
 		String outputFile = "hamstr.out";
 		
@@ -25,31 +25,52 @@ public class Hamstr {
 		hamstr.execute(inputFile, outputFile);
 	}
 	
-	public void execute(String inputFile, String outputFile) throws IOException {
-		// Initialize container which stores all expected food
-		// consumption properties for each humster
-		List<Integer[]> foodContainer = new ArrayList<Integer[]>();
-		
+	public void execute(String inputFile, String outputFile) throws IOException {		
 		// Read from file
 		File file = new File(inputFile);
 		FileReader fileReader = new FileReader(file);
 		BufferedReader bufferReader = new BufferedReader(fileReader);
 		
-		String foodStock = bufferReader.readLine();
-		String hamstersNumber = bufferReader.readLine();
+		int foodDailyStock = Integer.parseInt(bufferReader.readLine());
+		int hamstersNumber = Integer.parseInt(bufferReader.readLine());
+		
+		// Initialize container which stores all expected food
+		// consumption properties for each hamster
+		int[][] foodContainer = new int[hamstersNumber][2];
+		
+		// Keep reading from file
 		String currentLine;
+		int i = 0;
 		while ((currentLine = bufferReader.readLine()) != null) {
-			String[] singleHumsterFoodString = currentLine.split(" ");
-			Integer[] singleHumsterFood = new Integer[singleHumsterFoodString.length];
-			int i = 0;
-			while (i != singleHumsterFoodString.length) {
-				singleHumsterFood[i++] = Integer.parseInt(singleHumsterFoodString[i++]);
-			}
-			foodContainer.add(singleHumsterFood);
+			String[] singleHamsterFoodString = currentLine.split(" ");
+			foodContainer[i][0] = Integer.parseInt(singleHamsterFoodString[0]);
+			foodContainer[i++][1] = Integer.parseInt(singleHamsterFoodString[1]);
 		}
 		bufferReader.close();
-			
 		
+		sort(foodContainer);
+
+		int affordedHamsters = 0;
+		for (int j = 0; j < hamstersNumber; j++) {
+			int totalFoodConsumed = calculateConsumedFood(foodContainer, j);
+			if (totalFoodConsumed <= foodDailyStock) {
+				affordedHamsters = j + 1;
+			} else {
+				break;
+			}
+		}
+		
+		System.out.println(affordedHamsters);
+		
+	}
+	
+	private int calculateConsumedFood(int[][] foodContainer, int hamsterInProgress) {
+		int totalFoodConsumed = 0;
+		for (int i = 0; i <= hamsterInProgress; i++) {
+			totalFoodConsumed += foodContainer[i][0] + (hamsterInProgress) * foodContainer[i][1];
+		}
+		
+		return totalFoodConsumed;
 	}
 	
 	private void writeToFile(String outputFile, String string) throws IOException {
@@ -59,11 +80,11 @@ public class Hamstr {
 		fileWriter.close();
 	}
 	
-	private void sort(int[] array) {
+	private void sort(int[][] array) {
 		sort(array, 0, array.length - 1);
 	}
 	
-	private void sort(int[] array, int lo, int hi) {
+	private void sort(int[][] array, int lo, int hi) {
 		if (lo < hi) {
 			int mid = partition(array, lo, hi);
 			sort(array, lo, mid - 1);
@@ -71,12 +92,12 @@ public class Hamstr {
 		}
 	}
 	
-	private int partition(int[] array, int lo, int hi) {
+	private int partition(int[][] array, int lo, int hi) {
 		int pivot = hi;
 		int i = lo - 1;
 		
 		for (int j = lo; j < hi; j++) {
-			if (array[j] <= array[pivot]) {
+			if ((array[j][1] + array[j][1]) <= (array[pivot][0] + array[pivot][1])) {
 				i = i + 1;
 				swap(array, i, j);
 			}
@@ -85,8 +106,8 @@ public class Hamstr {
 		return i + 1;
 	}
 	
-	private void swap(int[] array, int i, int j) {
-		int temp = array[i];
+	private void swap(int[][] array, int i, int j) {
+		int temp[] = array[i];
 		array[i] = array[j];
 		array[j] = temp;
 	}
