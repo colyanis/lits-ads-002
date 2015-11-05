@@ -60,6 +60,7 @@ public class Hamstr {
 			}
 		}
 		
+		
 		writeToFile(outputFile, Integer.toString(affordedHamsters));
 		
 	}
