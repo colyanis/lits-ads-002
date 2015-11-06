@@ -9,6 +9,7 @@ import java.io.IOException;
 public class Hamstr {
 	private int[][] aux;
 	private int hamstersNumber;
+	private int dailyStock;
 	
 	public static void main(String[] args) throws IOException {
 		String inputFile = "hamstr.in";
@@ -30,8 +31,9 @@ public class Hamstr {
 		FileReader fileReader = new FileReader(file);
 		BufferedReader bufferReader = new BufferedReader(fileReader);
 		
-		int foodDailyStock = Integer.parseInt(bufferReader.readLine());
+		dailyStock = Integer.parseInt(bufferReader.readLine());
 		hamstersNumber = Integer.parseInt(bufferReader.readLine());
+		aux = new int[hamstersNumber][2];
 		
 		// Initialize container which stores all expected food
 		// consumption properties for each hamster
@@ -47,76 +49,41 @@ public class Hamstr {
 		}
 		bufferReader.close();
 		
-		aux = new int[foodContainer.length][2];
-		sort(foodContainer);
-		
-		int affordedHamsters = 0;
-		for (int j = 0; j < hamstersNumber; j++) {
-			int totalFoodConsumed = calculateConsumedFood(foodContainer, j);
-			if (totalFoodConsumed <= foodDailyStock) {
-				affordedHamsters = j + 1;
-			} else {
-				break;
-			}
-		}
-		
-		
+		int affordedHamsters = calculateConsumedFood(foodContainer);
 		writeToFile(outputFile, Integer.toString(affordedHamsters));
-		
 	}
 	
-	private int calculateConsumedFood(int[][] foodContainer, int hamsterInProgress) {
-		int totalFoodConsumed = 0;
-		int[] tempArray = new int[hamsterInProgress + 1];
-		for (int i = 0; i <= hamsterInProgress; i++) {
-			tempArray[i] = foodContainer[i][0] + (hamsterInProgress) * foodContainer[i][1];
-		}
+	private int calculateConsumedFood(int[][] foodContainer) {
+		int hamsters = 0;
+		int affordableFood = 0;
 		
-		for (int i = 0; i < tempArray.length - 1; i++) {
-			if (tempArray[i] > tempArray[i + 1]) {
-				swap(foodContainer, i, i + 1);
+		while (affordableFood <= dailyStock) {
+			sort(hamsters, foodContainer);
+			affordableFood = 0;
+			for (int humsterInProgress = 0; humsterInProgress <= hamsters; humsterInProgress++) {
+				affordableFood += foodContainer[humsterInProgress][0] + hamsters * foodContainer[humsterInProgress][1];	
 			}
+			hamsters++;
 		}
 		
-		for (int i = 0; i <= hamsterInProgress; i++) {
-			totalFoodConsumed += foodContainer[i][0] + (hamsterInProgress) * foodContainer[i][1];
-		}
-		
-		return totalFoodConsumed;
+		return hamsters - 1;
 	}
 	
-	private void writeToFile(String outputFile, String string) throws IOException {
-		File file = new File(outputFile);
-		FileWriter fileWriter = new FileWriter(file);
-		fileWriter.write(String.valueOf(string));
-		fileWriter.close();
+	private void sort(int hamster, int[][] array) {
+		sort(hamster, array, 0, array.length - 1);
 	}
 	
-	private void sortLinear(int[][] array) {
-		for (int i = 0; i < array.length - 1; i++) {
-			if ((array[i][0] + (hamstersNumber * array[i][1])) == (array[i+1][0] + (hamstersNumber * array[i+1][1]))) {
-				if (array[i][1] > array[i + 1][1]) {
-					swap(array, i, i + 1);
-				}
-			}
-		}
-	}
-	
-	private void sort(int[][] array) {
-		sort(array, 0, array.length - 1);
-	}
-	
-	private void sort(int[][] array, int lo, int hi) {
+	private void sort(int hamster, int[][] array, int lo, int hi) {
 		if (lo < hi) {
 			int mid = (lo + hi) / 2;
-			sort(array, lo, mid);
-			sort(array, mid + 1, hi);
-			merge(array, lo, mid, hi);
+			sort(hamster, array, lo, mid);
+			sort(hamster, array, mid + 1, hi);
+			merge(hamster, array, lo, mid, hi);
 			
 		}
 	}
 	
-	private void merge(int[][] array, int lo, int mid, int hi) {
+	private void merge(int hamster, int[][] array, int lo, int mid, int hi) {
 		int left = lo;
 		int right = mid + 1;
 		
@@ -129,7 +96,7 @@ public class Hamstr {
 				array[i] = aux[right++];
 			} else if (right > hi) {
 				array[i] = aux[left++];
-			} else if ((aux[left][0] + (hamstersNumber * aux[left][1])) < (aux[right][0] + (hamstersNumber * aux[right][1]))) {
+			} else if ((aux[left][0] + (hamster * aux[left][1])) < (aux[right][0] + (hamster * aux[right][1]))) {
 				array[i] = aux[left++];
 			} else {
 				array[i] = aux[right++];
@@ -141,5 +108,12 @@ public class Hamstr {
 		int temp[] = array[i];
 		array[i] = array[j];
 		array[j] = temp;
+	}
+	
+	private void writeToFile(String outputFile, String string) throws IOException {
+		File file = new File(outputFile);
+		FileWriter fileWriter = new FileWriter(file);
+		fileWriter.write(String.valueOf(string));
+		fileWriter.close();
 	}
 }
