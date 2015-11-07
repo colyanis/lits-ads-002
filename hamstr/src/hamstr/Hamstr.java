@@ -54,19 +54,18 @@ public class Hamstr {
 	}
 	
 	private int calculateConsumedFood(int[][] foodContainer) {
-		int hamsters = 0;
-		int affordableFood = 0;
-		
-		while (affordableFood <= dailyStock) {
-			hamsters++;
-			sort(hamsters - 1, foodContainer);
-			affordableFood = 0;
-			for (int humsterInProgress = 0; humsterInProgress < hamsters; humsterInProgress++) {
-				affordableFood += foodContainer[humsterInProgress][0] + (hamsters - 1) * foodContainer[humsterInProgress][1];	
+		for (int i = hamstersNumber; i > 0; i--) {
+			sort(i - 1, foodContainer);
+			int affordableFood = 0;
+			for (int hamsterInProgress = 0; hamsterInProgress < i; hamsterInProgress++) {
+				affordableFood += foodContainer[hamsterInProgress][0] + (i - 1) * foodContainer[hamsterInProgress][1];	
+			}
+			
+			if (affordableFood > dailyStock) {
+				return i - 1;
 			}
 		}
-		
-		return hamsters - 1;
+		return 0;
 	}
 	
 	private void sort(int hamster, int[][] array) {
