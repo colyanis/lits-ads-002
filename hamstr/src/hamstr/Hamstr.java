@@ -59,9 +59,14 @@ public class Hamstr {
 			
 			int affordableFood = 0;
 			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
-				affordableFood = affordableFood + foodContainer[hamsterInProgress - 1][0] + (i - 1) * foodContainer[hamsterInProgress - 1][1];			
+				affordableFood = affordableFood + foodContainer[hamsterInProgress - 1][0] + (i - 1) * foodContainer[hamsterInProgress - 1][1];
+				System.out.println("Hammster personal: " + foodContainer[hamsterInProgress - 1][0] + 
+						" -- greedy: " + foodContainer[hamsterInProgress - 1][1]);
 			}
 			if (affordableFood <= dailyStock) {
+				System.out.println("Daily stock: " + dailyStock);
+				System.out.println("Number of hamsters: " + hamstersNumber);
+				System.out.println("Affordable food: " + affordableFood);
 				return i;
 			}
 		}
