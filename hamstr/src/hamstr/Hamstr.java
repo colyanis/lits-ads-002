@@ -54,15 +54,15 @@ public class Hamstr {
 	}
 	
 	private int calculateConsumedFood(int[][] foodContainer) {
-		for (int i = hamstersNumber; i > 0; i--) {
-			sort(i - 1, foodContainer);
-			int affordableFood = 0;
-			for (int hamsterInProgress = 0; hamsterInProgress < i; hamsterInProgress++) {
-				affordableFood += foodContainer[hamsterInProgress][0] + (i - 1) * foodContainer[hamsterInProgress][1];	
-			}
+		for (int i = 1; i <= hamstersNumber; i++) {
+			sort(i, foodContainer);
 			
-			if (affordableFood <= dailyStock) {
-				return i;
+			int affordableFood = 0;
+			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
+				affordableFood = affordableFood + foodContainer[hamsterInProgress - 1][0] + (i - 1) * foodContainer[hamsterInProgress - 1][1];			
+			}
+			if (affordableFood > dailyStock) {
+				return i - 1;
 			}
 		}
 		return 0;
@@ -82,23 +82,23 @@ public class Hamstr {
 		}
 	}
 	
-	private void merge(int hamster, int[][] array, int lo, int mid, int hi) {
+	private void merge(int i, int[][] array, int lo, int mid, int hi) {
 		int left = lo;
 		int right = mid + 1;
 		
-		for (int i = lo; i <= hi; i++) {
-			aux[i] = array[i];
+		for (int k = lo; k <= hi; k++) {
+			aux[k] = array[k];
 		}
 		
-		for (int i = lo; i <= hi; i++) {
+		for (int k = lo; k <= hi; k++) {
 			if (left > mid) {
-				array[i] = aux[right++];
+				array[k] = aux[right++];
 			} else if (right > hi) {
-				array[i] = aux[left++];
-			} else if ((aux[left][0] + (hamster * aux[left][1])) < (aux[right][0] + (hamster * aux[right][1]))) {
-				array[i] = aux[left++];
+				array[k] = aux[left++];
+			} else if ((aux[left][0] + ((i - 1) * aux[left][1])) < (aux[right][0] + ((i -1) * aux[right][1]))) {
+				array[k] = aux[left++];
 			} else {
-				array[i] = aux[right++];
+				array[k] = aux[right++];
 			}
 		}
 	}
