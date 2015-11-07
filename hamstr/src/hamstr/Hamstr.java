@@ -61,8 +61,8 @@ public class Hamstr {
 				affordableFood += foodContainer[hamsterInProgress][0] + (i - 1) * foodContainer[hamsterInProgress][1];	
 			}
 			
-			if (affordableFood > dailyStock) {
-				return i - 1;
+			if (affordableFood <= dailyStock) {
+				return i;
 			}
 		}
 		return 0;
