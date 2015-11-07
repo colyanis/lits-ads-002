@@ -54,15 +54,15 @@ public class Hamstr {
 	}
 	
 	private int calculateConsumedFood(int[][] foodContainer) {
-		for (int i = 1; i <= hamstersNumber; i++) {
+		for (int i = hamstersNumber; i > 0; i--) {
 			sort(i, foodContainer);
 			
 			int affordableFood = 0;
 			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
 				affordableFood = affordableFood + foodContainer[hamsterInProgress - 1][0] + (i - 1) * foodContainer[hamsterInProgress - 1][1];			
 			}
-			if (affordableFood > dailyStock) {
-				return i - 1;
+			if (affordableFood <= dailyStock) {
+				return i;
 			}
 		}
 		return 0;
