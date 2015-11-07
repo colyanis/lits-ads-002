@@ -60,7 +60,7 @@ public class Hamstr {
 		while (affordableFood <= dailyStock) {
 			sort(hamsters, foodContainer);
 			affordableFood = 0;
-			for (int humsterInProgress = 0; humsterInProgress <= hamsters; humsterInProgress++) {
+			for (int humsterInProgress = 0; humsterInProgress < hamsters; humsterInProgress++) {
 				affordableFood += foodContainer[humsterInProgress][0] + hamsters * foodContainer[humsterInProgress][1];	
 			}
 			hamsters++;
