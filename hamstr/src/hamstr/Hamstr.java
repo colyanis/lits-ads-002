@@ -54,8 +54,11 @@ public class Hamstr {
 	}
 	
 	private int calculateConsumedFood(int[][] foodContainer) {
+		System.out.println("Daily stock: " + dailyStock);
+		System.out.println("Number of hamsters: " + hamstersNumber);
+		
 		for (int i = hamstersNumber; i > 0; i--) {
-			sort(i, foodContainer);
+			sort(foodContainer);
 			
 			int affordableFood = 0;
 			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
@@ -64,8 +67,6 @@ public class Hamstr {
 						" -- greedy: " + foodContainer[hamsterInProgress - 1][1]);
 			}
 			if (affordableFood <= dailyStock) {
-				System.out.println("Daily stock: " + dailyStock);
-				System.out.println("Number of hamsters: " + hamstersNumber);
 				System.out.println("Affordable food: " + affordableFood);
 				return i;
 			}
@@ -73,21 +74,21 @@ public class Hamstr {
 		return 0;
 	}
 	
-	private void sort(int hamster, int[][] array) {
-		sort(hamster, array, 0, array.length - 1);
+	private void sort(int[][] array) {
+		sort(array, 0, array.length - 1);
 	}
 	
-	private void sort(int hamster, int[][] array, int lo, int hi) {
+	private void sort(int[][] array, int lo, int hi) {
 		if (lo < hi) {
 			int mid = (lo + hi) / 2;
-			sort(hamster, array, lo, mid);
-			sort(hamster, array, mid + 1, hi);
-			merge(hamster, array, lo, mid, hi);
+			sort(array, lo, mid);
+			sort(array, mid + 1, hi);
+			merge(array, lo, mid, hi);
 			
 		}
 	}
 	
-	private void merge(int i, int[][] array, int lo, int mid, int hi) {
+	private void merge(int[][] array, int lo, int mid, int hi) {
 		int left = lo;
 		int right = mid + 1;
 		
@@ -100,7 +101,7 @@ public class Hamstr {
 				array[k] = aux[right++];
 			} else if (right > hi) {
 				array[k] = aux[left++];
-			} else if ((aux[left][0] + ((i - 1) * aux[left][1])) < (aux[right][0] + ((i -1) * aux[right][1]))) {
+			} else if ((aux[left][0] + aux[left][1]) < (aux[right][0] + aux[right][1])) {
 				array[k] = aux[left++];
 			} else {
 				array[k] = aux[right++];
