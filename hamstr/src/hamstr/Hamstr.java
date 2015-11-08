@@ -58,9 +58,8 @@ public class Hamstr {
 	
 	private int calculateConsumedFood(int[][] foodContainer) {		
 		for (int i = 1; i <= hamstersNumber; i++) {
-			System.out.println("Entering:");
+			System.out.println(i);
 			sort(i - 1, foodContainer);
-			System.out.println("Exit:");
 			BigInteger affordableFood = BigInteger.valueOf(0);
 			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
 				BigInteger self = BigInteger.valueOf(foodContainer[hamsterInProgress - 1][0]);
@@ -68,12 +67,8 @@ public class Hamstr {
 				BigInteger greed = BigInteger.valueOf(foodContainer[hamsterInProgress - 1][1]).multiply(compatitors);
 				affordableFood = affordableFood.add(self);
 				affordableFood = affordableFood.add(greed);
-
-				System.out.println("Hamster personal: " + foodContainer[hamsterInProgress - 1][0] + 
-						" -- greedy: " + foodContainer[hamsterInProgress - 1][1]);
 			}
 			if (affordableFood.compareTo(dailyStock) > 0) {
-				System.out.println("Affordable food: " + affordableFood);
 				return i - 1;
 			}
 		}
