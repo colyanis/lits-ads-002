@@ -57,7 +57,7 @@ public class Hamstr {
 	}
 	
 	private int calculateConsumedFood(int[][] foodContainer) {		
-		for (int i = 1; i < hamstersNumber; i++) {
+		for (int i = 1; i <= hamstersNumber; i++) {
 			System.out.println("Entering:");
 			sort(i - 1, foodContainer);
 			System.out.println("Exit:");
