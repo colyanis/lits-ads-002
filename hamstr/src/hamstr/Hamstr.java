@@ -57,13 +57,13 @@ public class Hamstr {
 		System.out.println("Daily stock: " + dailyStock);
 		System.out.println("Number of hamsters: " + hamstersNumber);
 		
+		
 		for (int i = hamstersNumber; i > 0; i--) {
-			sort(foodContainer);
-			
+			sort(i - 1, foodContainer);
 			int affordableFood = 0;
 			for (int hamsterInProgress = 1; hamsterInProgress <= i; hamsterInProgress++) {
 				affordableFood = affordableFood + foodContainer[hamsterInProgress - 1][0] + (i - 1) * foodContainer[hamsterInProgress - 1][1];
-				System.out.println("Hammster personal: " + foodContainer[hamsterInProgress - 1][0] + 
+				System.out.println("Hamster personal: " + foodContainer[hamsterInProgress - 1][0] + 
 						" -- greedy: " + foodContainer[hamsterInProgress - 1][1]);
 			}
 			if (affordableFood <= dailyStock) {
@@ -74,39 +74,31 @@ public class Hamstr {
 		return 0;
 	}
 	
-	private void sort(int[][] array) {
-		sort(array, 0, array.length - 1);
+	private void sort(int h, int[][] array) {
+		sort(h, array, 0, array.length - 1);
 	}
 	
-	private void sort(int[][] array, int lo, int hi) {
+	private void sort(int h, int[][] array, int lo, int hi) {
 		if (lo < hi) {
-			int mid = (lo + hi) / 2;
-			sort(array, lo, mid);
-			sort(array, mid + 1, hi);
-			merge(array, lo, mid, hi);
-			
+			int q = partition(h, array, lo, hi);
+			sort(h, array, lo, q - 1);
+			sort(h, array, q + 1, hi);
 		}
 	}
 	
-	private void merge(int[][] array, int lo, int mid, int hi) {
-		int left = lo;
-		int right = mid + 1;
+	private int partition(int h, int[][] array, int lo, int hi) {
+		int pivot = array[hi][0] + h * array[hi][1];
+		int i = lo - 1;
 		
-		for (int k = lo; k <= hi; k++) {
-			aux[k] = array[k];
-		}
-		
-		for (int k = lo; k <= hi; k++) {
-			if (left > mid) {
-				array[k] = aux[right++];
-			} else if (right > hi) {
-				array[k] = aux[left++];
-			} else if ((aux[left][0] + aux[left][1]) < (aux[right][0] + aux[right][1])) {
-				array[k] = aux[left++];
-			} else {
-				array[k] = aux[right++];
+		for (int j = lo; j <= hi; j++) {
+			if ((array[j][0] + h * array[j][1]) < pivot) {
+				i += 1;
+				swap(array, i, j);
 			}
 		}
+		swap(array, i + 1, hi);
+		
+		return i + 1;
 	}
 	
 	private void swap(int[][] array, int i, int j) {
