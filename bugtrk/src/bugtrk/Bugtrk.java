@@ -37,7 +37,7 @@ public class Bugtrk {
 		long width = Integer.parseInt(input[1]);
 		long height = Integer.parseInt(input[2]);
 	
-		long size = width * height * totalCards;
+		long size = width * totalCards;
 		long rows = 1;
 		long columns = totalCards;
 		long currentColumns = 0;
