@@ -57,7 +57,7 @@ public class Bugtrk {
 			}
 		}
 		System.out.println(size);
-		//writeToFile(outputFile, Integer.toString(totalPairs));
+		writeToFile(outputFile, Long.toString(size));
 	}
 	
 	
