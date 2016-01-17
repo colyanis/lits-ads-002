@@ -3,10 +3,10 @@ package career;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Career {
+	int[][] memoized;
 	public static void main(String[] args) throws Exception {
 		String inputFile = "career.in";
 		String outputFile = "career.out";
@@ -18,19 +18,32 @@ public class Career {
 		
 		Career career = new Career();
 		int[][] values = career.readFromFile(inputFile);
-				
+		
+		long t1 = System.currentTimeMillis();
 		int sum = career.calculate(values);
+		long t2 = System.currentTimeMillis();
+		
+		System.out.println(t2 - t1);
 		
 		career.writeToFile(outputFile, sum);
 	}
 	
 	private int calculate(int[][] values) {
-		int length = values.length;
+		int hight = values.length;
+		int width = values[hight - 1].length;
+		
+		// Create matrix for memoization of already calculated values
+		memoized = new int[hight][width];
+		for (int i = 0; i < hight; i++) {
+			for (int j = 0; j < width; j++) {
+				memoized[i][j] = Integer.MAX_VALUE;
+			}
+		}
 		
 		int sum = Integer.MIN_VALUE;
-		for (int i = 0; i < values[length - 1].length; i++) {
-			int[][] reducedArray = copyCutArray(values, (length - 1) - 1);
-			sum = Math.max(sum, values[length - 1][i] + calculate(reducedArray, i));
+		for (int i = 0; i < width; i++) {
+			int[][] reducedArray = copyCutArray(values, (hight - 1) - 1);
+			sum = Math.max(sum, values[hight - 1][i] + calculate(reducedArray, i));
 		}
 		return sum;
 	}
@@ -39,15 +52,22 @@ public class Career {
 		if (values.length == 0) {
 			return 0;
 		}
-		
+				
 		int sum = Integer.MIN_VALUE;
 		int rows = values.length;
 		
 		for (int i = rows - 1; i >= 0; i--) {
 			for (int j = 0; j < values[i].length; j++) {
-				if (j == (col - 1) || j == col){
-					int[][] array = copyCutArray(values, i - 1);
-					sum = Math.max(sum, values[i][j] + calculate(array, j));	
+				if (j == (col - 1) || j == col){						
+					int[][] reducedArray = copyCutArray(values, i - 1);
+					if (memoized[i][j] < Integer.MAX_VALUE) {
+						int calculatedMaxPath = memoized[i][j];
+						sum = Math.max(sum, values[i][j] + calculatedMaxPath);
+					} else {
+						int calculatedMaxPath = calculate(reducedArray, j);
+						memoized[i][j] = calculatedMaxPath;
+						sum = Math.max(sum, values[i][j] + calculatedMaxPath);
+					}
 				} 
 			}
 		}
@@ -67,22 +87,31 @@ public class Career {
 	}
 	
 	private int[][] readFromFile(String path) throws Exception {
-		File file = new File(path);
-		Scanner scanner = new Scanner(file);
-		int rows = scanner.nextInt();
-		scanner.nextLine();
-		int[][] values = new int[rows][];
-		
-		for (int i = 0; i < rows; i++) {
-			String[] line = scanner.nextLine().split(" ");
-			values[i] = new int[line.length];
+		Scanner scanner = null;
+		try {
+			File file = new File(path);
+			scanner = new Scanner(file);
+			int rows = scanner.nextInt();
+			scanner.nextLine();
+			int[][] values = new int[rows][];
 			
-			for (int j = 0; j < line.length; j++) {
-				values[i][j] = Integer.parseInt(line[j].trim());
+			for (int i = 0; i < rows; i++) {
+				String[] line = scanner.nextLine().split(" ");
+				values[i] = new int[line.length];
+				
+				for (int j = 0; j < line.length; j++) {
+					values[i][j] = Integer.parseInt(line[j].trim());
+				}
 			}
-		}
+			
+			return values;
 		
-		return values;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			scanner.close();
+		}
+		return null;
 	}
 	
 	private void writeToFile(String outputFile, int value) throws IOException {
