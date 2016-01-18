@@ -40,50 +40,40 @@ public class Career {
 			}
 		}
 		
+		// Perform main calculation
 		int sum = Integer.MIN_VALUE;
 		for (int i = 0; i < width; i++) {
-			int[][] reducedArray = copyCutArray(values, (hight - 1) - 1);
-			sum = Math.max(sum, values[hight - 1][i] + calculate(reducedArray, i));
+			sum = Math.max(sum, values[hight - 1][i] + calculate(values, i, (hight - 1) - 1));
 		}
 		return sum;
 	}
 	
-	private int calculate(int[][] values, int col) {
-		if (values.length == 0) {
+	// Recursively calculate sum of elements above current row.
+	// Elements to be calculated must be in the column equal to one
+	// under element to add or by one column less (if element is not in edge
+	// column)
+	private int calculate(int[][] values, int col, int rowReduced) {
+		if (rowReduced == -1) {
 			return 0;
-		}
-				
-		int sum = Integer.MIN_VALUE;
-		int rows = values.length;
+		}				
 		
-		for (int i = rows - 1; i >= 0; i--) {
-			for (int j = 0; j < values[i].length; j++) {
-				if (j == (col - 1) || j == col){						
-					int[][] reducedArray = copyCutArray(values, i - 1);
-					if (memoized[i][j] < Integer.MAX_VALUE) {
-						int calculatedMaxPath = memoized[i][j];
-						sum = Math.max(sum, values[i][j] + calculatedMaxPath);
-					} else {
-						int calculatedMaxPath = calculate(reducedArray, j);
-						memoized[i][j] = calculatedMaxPath;
-						sum = Math.max(sum, values[i][j] + calculatedMaxPath);
-					}
-				} 
+		int sum = Integer.MIN_VALUE;		
+		for (int j = 0; j < values[rowReduced].length; j++) {
+			if (j == (col - 1) || j == col) {
+				if (memoized[rowReduced][j] < Integer.MAX_VALUE) {
+					int calculatedMaxPath = memoized[rowReduced][j];
+					sum = Math.max(sum, values[rowReduced][j]
+							+ calculatedMaxPath);
+				} else {
+					int calculatedMaxPath = calculate(values, j, rowReduced - 1);
+					memoized[rowReduced][j] = calculatedMaxPath;
+					sum = Math.max(sum, values[rowReduced][j]
+							+ calculatedMaxPath);
+				}
 			}
 		}
-		
-		return sum;
-	}
 	
-	private int[][] copyCutArray(int[][] array, int rowNumber) {
-		int[][] finalArray = new int[rowNumber + 1][];
-		for (int i = 0; i < finalArray.length; i++) {
-			finalArray[i] = new int[array[i].length];
-			for (int j = 0; j < finalArray[i].length; j++) {
-				finalArray[i][j] = array[i][j];
-			}
-		}
-		return finalArray;
+		return sum;
 	}
 	
 	private int[][] readFromFile(String path) throws Exception {
